@@ -1,18 +1,19 @@
+local area = {1,1,1}
+local initFacing = ''
+local facing = ''
 print("Which direction am i facing?, example: north,east,west,south")
-local initFacing = io.read()
-local facing = initFacing
-
-print("Give me an area to mine, example: 5 long 4 wide 1 deep ")
-local area = {io.read("*n","*n","*n")}
-
-
-
-
-
+facing = read()
+facing = initFacing
+print("Give me the length to mine")
+area[1] = read()
+print("Give me the width to mine")
+area[2] = read()
+print("Give me the depth to mine")
+area[3] = read()
 
 
 function mineWidth()
-    for i=2,area[2] do
+    for i=2,area[2] or 1 do
         if facing == initFacing then
             turtle.turnLeft()
             turtle.dig()
@@ -45,7 +46,8 @@ function setFacing()
 end
 
 function mineLength( j )
-    for i=j,area[1] do
+    j = j or 1
+    for i=j,area[1] or 1 do
         checkFuel()
         checkItemCount()
         turtle.dig()
@@ -74,3 +76,5 @@ function checkItemCount( )
         end
     end
 end
+
+mineLength()
