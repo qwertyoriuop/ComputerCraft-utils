@@ -34,15 +34,13 @@ end
 function setFacing()
     if initFacing == "north" then
         facing = "south"
-    else if initFacing == "east" then
+    elseif initFacing == "east" then
         facing = "west"
     
-    else if initFacing == "west" then
+    elseif initFacing == "west" then
         facing = "east"
     else
         facing = "north"
-    end
-    end
     end
 end
 
