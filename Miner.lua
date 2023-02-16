@@ -11,26 +11,28 @@ area[2] = read()
 print("Give me the depth to mine")
 area[3] = read()
 
-
+local d = 1
 function mineWidth()
-    for i=2,area[2]do
-        if facing == initFacing then
-            turtle.turnLeft()
-            turtle.dig()
-            turtle.forward()
-            turtle.turnLeft()
-            setFacing()
-        else
-            turtle.turnRight()
-            turtle.dig()
-            turtle.forward()
-            turtle.turnRight()
-            setFacing()
-        end
-        print("finished width")
+    if d == 1 then
+        mineLength(2)
+        d = d + 1
+    end
+    if facing == initFacing then
+        turtle.turnLeft()
+        turtle.dig()
+        turtle.forward()
+        turtle.turnLeft()
+        setFacing()
+    else
+        turtle.turnRight()
+        turtle.dig()
+        turtle.forward()
+        turtle.turnRight()
+        setFacing()
+    end
+    if d ~= 1 then
         mineLength(2)
     end
-     --mine down part
 end
 
 function setFacing()
@@ -54,8 +56,6 @@ function mineLength( j )
         turtle.dig()
         turtle.forward()
     end
-    print("finished Length")
-    mineWidth()
 end
 
 function checkFuel( )
@@ -79,4 +79,8 @@ function checkItemCount( )
     end
 end
 
-mineLength()
+
+for j=1,area[2]-1 do
+    mineWidth()
+end
+
