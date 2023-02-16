@@ -2,7 +2,7 @@ local area = {1,1,1}
 local initFacing = ''
 local facing = ''
 print("Which direction am i facing?, example: north,east,west,south")
-facing = read()
+initFacing = read()
 facing = initFacing
 print("Give me the length to mine")
 area[1] = read()
@@ -13,7 +13,7 @@ area[3] = read()
 
 
 function mineWidth()
-    for i=2,area[2] or 1 do
+    for i=2,area[2]do
         if facing == initFacing then
             turtle.turnLeft()
             turtle.dig()
@@ -27,18 +27,19 @@ function mineWidth()
             turtle.turnRight()
             setFacing()
         end
+        print("finished width")
         mineLength(2)
     end
      --mine down part
 end
 
 function setFacing()
-    if initFacing == "north" then
+    if facing == "north" then
         facing = "south"
-    elseif initFacing == "east" then
+    elseif facing == "east" then
         facing = "west"
     
-    elseif initFacing == "west" then
+    elseif facing == "west" then
         facing = "east"
     else
         facing = "north"
@@ -47,12 +48,13 @@ end
 
 function mineLength( j )
     j = j or 1
-    for i=j,area[1] or 1 do
+    for i=j,area[1] do
         checkFuel()
         checkItemCount()
         turtle.dig()
         turtle.forward()
     end
+    print("finished Length")
     mineWidth()
 end
 
