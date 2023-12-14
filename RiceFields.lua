@@ -13,7 +13,8 @@ function isMature()
     local success, data = turtle.inspect()
     if success then
         -- Adjust the condition based on how the game represents mature crops
-        return data.state.growth == "mature"
+        -- return data.state.growth == "mature"
+        return data.state.age == 3
     else
         return false
     end
