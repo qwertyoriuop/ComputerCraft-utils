@@ -1,20 +1,15 @@
--- Function to check if the turtle has enough fuel
--- function checkFuel()
---     local fuelLevel = turtle.getFuelLevel()
---     if fuelLevel < 10 then
---         -- Assuming you have fuel in the first slot
---         turtle.select(1)
---         turtle.refuel(1)
---     end
--- end
+-- Function to check if the block below is rice
+function isRiceBelow()
+    local success, data = turtle.inspectDown()
+    return success and data.name == "farmersdelight:rice"
+end
 
--- Function to check if the block in front is a mature crop
+-- Function to check if the block in front is a mature rice crop
 function isMature()
     local success, data = turtle.inspect()
     if success then
-        -- Adjust the condition based on how the game represents mature crops
-        -- return data.state.growth == "mature"
-        return data.state.age == 3
+        -- Check for mature rice crop
+        return data.name == "farmersdelight:rice" and data.state.age == 3
     else
         return false
     end
@@ -27,20 +22,20 @@ function mineIfMature()
     end
 end
 
--- Main function to move in a square pattern
-function squarePattern(n)
-    for i = 1, 4 do -- four sides of the square
-        for j = 1, n - 1 do -- move n-1 times for each side
-            -- checkFuel()  --fuel check disabled for now
-            mineIfMature()
-            turtle.forward()
-        end
-        turtle.turnRight()
+-- Function to move in the pattern you described
+function ricePattern()
+    while isRiceBelow() do
+        mineIfMature()
+        turtle.forward()
+    end
+
+    -- Move one block to the side
+    turtle.turnRight()
+    if isRiceBelow() then  -- Check if there is rice in the next row
+        turtle.forward()
+        turtle.turnLeft()
     end
 end
 
--- Size of the square
-local size = 5 -- Change this to your desired size
-
--- Start the square pattern mining
-squarePattern(size)
+-- Start the rice pattern mining
+ricePattern()
