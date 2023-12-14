@@ -13,13 +13,14 @@ function goTillMature()
     print("going till mature is found")
     turtle.up()
     turtle.forward()
-    if isRiceFanicleBelow then
+    if isRiceFanicleBelow() then
         if checkMatureFanicle() then
             turtle.digDown()
             turtle.down()
         end
     end
 end
+
 function checkMatureFanicle()
     local success, data = turtle.inspectDown()
     if success then
@@ -47,11 +48,12 @@ function isMature()
     if success then
         -- Check for mature rice crop
         -- return data.name == "farmersdelight:rice" and data.state.age == 3
-        if isRiceFanicleBelow() then
+        if isRiceBelow() then
             print(data.state.age)
             if data.state.age == 3 then
                 return data.state.age == 3
             else
+                goTillMature()
                 print("Not mature")
             end
         else
