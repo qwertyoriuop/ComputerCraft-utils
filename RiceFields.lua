@@ -4,13 +4,60 @@ function isRiceBelow()
     return success and data.name == "farmersdelight:rice"
 end
 
+function isRiceFanicleBelow()
+    local success, data = turtle.inspectDown()
+    return success and data.name == "farmersdelight:rice_panicles"
+end
+
+function goTillMature()
+    print("going till mature is found")
+    turtle.up()
+    turtle.forward()
+    if isRiceFanicleBelow then
+        if checkMatureFanicle() then
+            turtle.digDown()
+            turtle.down()
+        end
+    end
+end
+function checkMatureFanicle()
+    local success, data = turtle.inspectDown()
+    if success then
+        if data.name == "farmersdelight:rice_panicles" then
+            print("rice fanicle found")
+            if data.state.age == 3 then
+                print("mature rice fanicle found")
+                return true
+            else
+                print("immature rice fanicle found")
+                return false
+            end
+        else
+            print("not rice fanicle")
+            return false
+        end
+    else
+        print("no block below")
+        return false
+    end
+end
 -- Function to check if the block in front is a mature rice crop
 function isMature()
     local success, data = turtle.inspect()
     if success then
         -- Check for mature rice crop
         -- return data.name == "farmersdelight:rice" and data.state.age == 3
-        return data.state.age == 3
+        if isRiceFanicleBelow() then
+            print(data.state.age)
+            if data.state.age == 3 then
+                return data.state.age == 3
+            else
+                print("Not mature")
+            end
+        else
+            print("Not rice")
+            return false
+        end
     else
         return false
     end
