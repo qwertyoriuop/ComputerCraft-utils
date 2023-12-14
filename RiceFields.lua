@@ -9,7 +9,8 @@ function isMature()
     local success, data = turtle.inspect()
     if success then
         -- Check for mature rice crop
-        return data.name == "farmersdelight:rice" and data.state.age == 3
+        -- return data.name == "farmersdelight:rice" and data.state.age == 3
+        return data.state.age == 3
     else
         return false
     end
