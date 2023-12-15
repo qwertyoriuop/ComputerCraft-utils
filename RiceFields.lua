@@ -26,20 +26,29 @@ function mineIfMature()
     end
 end
 
--- Function to check if the turtle is at the edge of the rice field
-function isAtEdgeOfRiceField()
+-- Function to check if the turtle is facing an edge or a non-rice block
+function isFacingNonRiceBlock()
     local success, data = turtle.inspect()
     return not success or (data.name ~= "farmersdelight:rice" and data.name ~= "farmersdelight:rice_panicles")
 end
 
--- Function to handle moving to the next row
+-- Function to move to the next row
 function moveToNextRow()
+    -- Turn to the right and check if the next block is part of the rice field
     turtle.turnRight()
-    if isAtEdgeOfRiceField() then
-        print("Reached the edge of the rice field.")
-        return false
+    if isFacingNonRiceBlock() then
+        -- If facing an edge or non-rice block, turn left and move to the next line
+        turtle.turnLeft()
+        turtle.turnLeft()
+        if not turtle.forward() then
+            -- If unable to move forward, we have reached the end of the field
+            print("Reached the end of the rice field. Stopping.")
+            return false
+        end
+        turtle.turnRight()
+        return true
     else
-        turtle.forward()
+        -- If the next block is rice, simply turn back and continue
         turtle.turnLeft()
         return true
     end
@@ -65,13 +74,13 @@ function ricePattern()
         end
 
         -- Move forward only if there's more rice or panicle ahead
-        if not isAtEdgeOfRiceField() then
-            turtle.forward()
-        else
+        if isFacingNonRiceBlock() then
             if not moveToNextRow() then
                 print("No more rows to harvest. Stopping.")
                 break
             end
+        else
+            turtle.forward()
         end
     end
 end
