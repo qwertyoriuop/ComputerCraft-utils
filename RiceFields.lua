@@ -57,18 +57,12 @@ end
 -- Main function to handle the pattern
 function ricePattern()
     while true do
-        if not mineIfMature() then
+        local mined = mineIfMature()
+        if not mined then
             -- Move down to check for rice if not mining
             turtle.down()
-            if not isRiceBelow() then
-                -- If there's no rice below, move up and try the next row
-                turtle.up()
-                if not moveToNextRow() then
-                    print("No more rows to harvest. Stopping.")
-                    break
-                end
-            else
-                -- Move up to the panicle layer
+            if isRiceBelow() then
+                -- Move up to the panicle layer as rice was found below
                 turtle.up()
             end
         end
