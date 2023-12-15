@@ -26,73 +26,50 @@ function mineIfMature()
     end
 end
 
--- Function to adjust the turtle's altitude to the correct layer
-function adjustAltitude()
-    if not isRiceBelow() then
-        turtle.down()
-        if isRiceBelow() then
-            print("Adjusted altitude to rice layer.")
-        else
-            print("Error: Rice layer not found below.")
-        end
+-- Function to check if the turtle is at the edge of the rice field
+function isAtEdgeOfRiceField()
+    local success, data = turtle.inspect()
+    return not success or (data.name ~= "farmersdelight:rice" and data.name ~= "farmersdelight:rice_panicles")
+end
+
+-- Function to handle moving to the next row
+function moveToNextRow()
+    turtle.turnRight()
+    if isAtEdgeOfRiceField() then
+        print("Reached the edge of the rice field.")
+        return false
     else
-        print("Turtle is at the correct altitude.")
+        turtle.forward()
+        turtle.turnLeft()
+        return true
     end
-end
-
--- Function to move to next panicle
-function moveToNextPanicle()
-    local success = false
-    -- Check the front, right, and left for a panicle. If one exists, move to it.
-    local directions = {turtle.forward, turtle.turnRight, turtle.forward, turtle.turnLeft, turtle.forward}
-    for i, action in ipairs(directions) do
-        if i == 2 or i == 4 then
-            action() -- turn, don't check
-        else
-            action()
-            adjustAltitude() -- Make sure we're on the correct layer
-            if isRicePanicleBelow() then
-                success = true
-                break
-            end
-        end
-    end
-    return success
-end
-
--- Function to start the harvesting process
-function startHarvesting()
-    adjustAltitude() -- Initial adjustment before starting
-    -- If turtle starts on top of a panicle, mine it.
-    if not mineIfMature() then
-        -- If it wasn't a mature panicle, or there was no panicle, move down to check for rice.
-        turtle.down()
-        if not isRiceBelow() then
-            -- If there's no rice below, we're in the air and need to move to find the rice layer.
-            if not moveToNextPanicle() then
-                -- If we can't find the next panicle, the field might be harvested, and we can stop.
-                print("No more panicles found. Stopping.")
-                return
-            end
-        end
-        -- Now we should be on the rice layer, move back up to the panicle layer if necessary.
-        adjustAltitude()
-    end
-    -- Continue with the next panicle.
-    moveToNextPanicle()
 end
 
 -- Main function to handle the pattern
 function ricePattern()
     while true do
-        startHarvesting()
-        if isRiceBelow() then
-            -- We expect to be above a rice block now, so let's move forward to the next panicle.
+        if not mineIfMature() then
+            -- Move down to check for rice if not mining
+            turtle.down()
+            if not isRiceBelow() then
+                -- If there's no rice below, move up and try the next row
+                turtle.up()
+                if not moveToNextRow() then
+                    print("No more rows to harvest. Stopping.")
+                    break
+                end
+            else
+                -- Move up to the panicle layer
+                turtle.up()
+            end
+        end
+
+        -- Move forward only if there's more rice or panicle ahead
+        if not isAtEdgeOfRiceField() then
             turtle.forward()
         else
-            -- If we find ourselves not above a rice block, we should search for the next panicle.
-            if not moveToNextPanicle() then
-                print("No more panicles found. Stopping.")
+            if not moveToNextRow() then
+                print("No more rows to harvest. Stopping.")
                 break
             end
         end
