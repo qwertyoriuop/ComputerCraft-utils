@@ -1,19 +1,19 @@
 -- Function to check if the block below is rice
 function isRiceBelow()
     local success, data = turtle.inspectDown()
-    return success and (data.name == "farmersdelight:rice")
+    return success and data.name == "farmersdelight:rice"
 end
 
 -- Function to check if the block below is a rice panicle
 function isRicePanicleBelow()
     local success, data = turtle.inspectDown()
-    return success and (data.name == "farmersdelight:rice_panicles")
+    return success and data.name == "farmersdelight:rice_panicles"
 end
 
 -- Function to check for mature rice panicle
 function checkMaturePanicle()
     local success, data = turtle.inspectDown()
-    return success and (data.name == "farmersdelight:rice_panicles" and data.metadata.age == 3)
+    return success and data.name == "farmersdelight:rice_panicles" and data.state.age == 3
 end
 
 -- Function to mine a mature crop
@@ -23,6 +23,20 @@ function mineIfMature()
         return true
     else
         return false
+    end
+end
+
+-- Function to adjust the turtle's altitude to the correct layer
+function adjustAltitude()
+    if not isRiceBelow() then
+        turtle.down()
+        if isRiceBelow() then
+            print("Adjusted altitude to rice layer.")
+        else
+            print("Error: Rice layer not found below.")
+        end
+    else
+        print("Turtle is at the correct altitude.")
     end
 end
 
@@ -36,6 +50,7 @@ function moveToNextPanicle()
             action() -- turn, don't check
         else
             action()
+            adjustAltitude() -- Make sure we're on the correct layer
             if isRicePanicleBelow() then
                 success = true
                 break
@@ -47,6 +62,7 @@ end
 
 -- Function to start the harvesting process
 function startHarvesting()
+    adjustAltitude() -- Initial adjustment before starting
     -- If turtle starts on top of a panicle, mine it.
     if not mineIfMature() then
         -- If it wasn't a mature panicle, or there was no panicle, move down to check for rice.
@@ -59,8 +75,8 @@ function startHarvesting()
                 return
             end
         end
-        -- Now we should be on the rice layer, move back up to the panicle layer.
-        turtle.up()
+        -- Now we should be on the rice layer, move back up to the panicle layer if necessary.
+        adjustAltitude()
     end
     -- Continue with the next panicle.
     moveToNextPanicle()
